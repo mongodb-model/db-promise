@@ -87,10 +87,13 @@ class AsyncAwait extends require("./base") {
     data = {},
     dbName = this.db,
     collectionName = this.collection,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (data && typeof data !== "object") {
       this.emit("awaitInsertOne-error", {
+        error: "input data must be an object",
+      });
+      this.emit("insertOne-error", {
         error: "input data must be an object",
       });
       return { error: "input data must be an object" };
@@ -102,9 +105,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.insertOne(data);
 
       this.emit("awaitInsertOne", response);
+      this.emit("insertOne", response);
       return response;
     } catch (error) {
       this.emit("awaitInsertOne-error", error);
+      this.emit("insertOne-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -130,10 +135,13 @@ class AsyncAwait extends require("./base") {
     data = {},
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (!data || !Array.isArray(data)) {
       this.emit("awaitInsertMany-error", {
+        error: "input data must be an array of objects",
+      });
+      this.emit("insertMany-error", {
         error: "input data must be an array of objects",
       });
       return { error: "input data must be an array of objects" };
@@ -145,9 +153,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.insertOne(data);
 
       this.emit("awaitInsertMany", response);
+      this.emit("insertMany", response);
       return response;
     } catch (error) {
       this.emit("awaitInsertMany-error", error);
+      this.emit("insertMany-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -173,10 +183,13 @@ class AsyncAwait extends require("./base") {
     data = {},
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (!data || !Array.isArray(data)) {
       this.emit("awaitCreateMany-error", {
+        error: "input data must be an array of objects",
+      });
+      this.emit("createMany-error", {
         error: "input data must be an array of objects",
       });
       return { error: "input data must be an array of objects" };
@@ -188,9 +201,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.insertOne(data);
 
       this.emit("awaitCreateMany", response);
+      this.emit("createMany", response);
       return response;
     } catch (error) {
       this.emit("awaitCreateMany-error", error);
+      this.emit("createMany-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -216,10 +231,11 @@ class AsyncAwait extends require("./base") {
     data = {},
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (data && typeof data !== "object") {
       this.emit("awaitCreate-error", { error: "input data must be an object" });
+      this.emit("create-error", { error: "input data must be an object" });
       return { error: "input data must be an object" };
     }
     try {
@@ -229,9 +245,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.insertOne(data);
 
       this.emit("awaitCreate", response);
+      this.emit("create", response);
       return response;
     } catch (error) {
       this.emit("awaitCreate-error", error);
+      this.emit("create-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -258,10 +276,13 @@ class AsyncAwait extends require("./base") {
     query = {},
     dbName = this.db,
     collectionName = this.collection,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (query && typeof query !== "object") {
       this.emit("awaitFindOne-error", {
+        error: "input query must be an object",
+      });
+      this.emit("findOne-error", {
         error: "input query must be an object",
       });
       return { error: "input data must be an object" };
@@ -273,9 +294,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.findOne(query);
 
       this.emit("awaitFindOne", response);
+      this.emit("findOne", response);
       return response;
     } catch (error) {
       this.emit("awaitFindOne-error", error);
+      this.emit("findOne-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -301,10 +324,11 @@ class AsyncAwait extends require("./base") {
     query = {},
     dbName = this.db,
     collectionName = this.collection,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (query && typeof query !== "object") {
       this.emit("awaitFirst-error", { error: "input query must be an object" });
+      this.emit("first-error", { error: "input query must be an object" });
       return { error: "input data must be an object" };
     }
     try {
@@ -314,9 +338,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.findOne(query);
 
       this.emit("awaitFirst", response);
+      this.emit("first", response);
       return response;
     } catch (error) {
       this.emit("awaitFirst-error", error);
+      this.emit("first-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -344,14 +370,18 @@ class AsyncAwait extends require("./base") {
     projection = {},
     dbName = this.db,
     collectionName = this.collection,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (query && typeof query !== "object") {
       this.emit("awaitFind-error", { error: "input query must be an object" });
+      this.emit("find-error", { error: "input query must be an object" });
       return { error: "input query must be an object" };
     }
     if (projection && typeof projection !== "object") {
       this.emit("awaitFind-error", {
+        error: "projection query must be an object",
+      });
+      this.emit("find-error", {
         error: "projection query must be an object",
       });
       return { error: "projection query must be an object" };
@@ -364,9 +394,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.find(query, projection).toArray();
 
       this.emit("awaitFind", response);
+      this.emit("find", response);
       return response;
     } catch (error) {
       this.emit("awaitFind-error", error);
+      this.emit("find-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -394,14 +426,18 @@ class AsyncAwait extends require("./base") {
     projection = {},
     dbName = this.db,
     collectionName = this.collection,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (query && typeof query !== "object") {
       this.emit("awaitAll-error", { error: "input query must be an object" });
+      this.emit("all-error", { error: "input query must be an object" });
       return { error: "input query must be an object" };
     }
     if (projection && typeof projection !== "object") {
       this.emit("awaitAll-error", {
+        error: "projection query must be an object",
+      });
+      this.emit("all-error", {
         error: "projection query must be an object",
       });
       return { error: "projection query must be an object" };
@@ -413,9 +449,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.find(query, projection).toArray();
 
       this.emit("awaitAll", response);
+      this.emit("all", response);
       return response;
     } catch (error) {
       this.emit("awaitAll-error", error);
+      this.emit("all-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -444,18 +482,24 @@ class AsyncAwait extends require("./base") {
     projection = {},
     dbName = this.db,
     collectionName = this.collection,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (query && typeof query !== "object") {
       this.emit("awaitSort-error", { error: "input query must be an object" });
+      this.emit("sort-error", { error: "input query must be an object" });
       return { error: "input query must be an object" };
     }
     if (sort && typeof sort !== "object") {
       this.emit("awaitSort-error", { error: "sort query must be an object" });
+      this.emit("sort-error", { error: "sort query must be an object" });
+
       return { error: "sort query must be an object" };
     }
     if (projection && typeof projection !== "object") {
       this.emit("awaitSort-error", {
+        error: "projection query must be an object",
+      });
+      this.emit("sort-error", {
         error: "projection query must be an object",
       });
       return { error: "projection query must be an object" };
@@ -468,9 +512,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.find(query, projection).sort(sort).toArray();
 
       this.emit("awaitSort", response);
+      this.emit("sort", response);
       return response;
     } catch (error) {
       this.emit("awaitSort-error", error);
+      this.emit("sort-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -496,10 +542,13 @@ class AsyncAwait extends require("./base") {
     query = {},
     dbName = this.db,
     collectionName = this.collection,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (query && typeof query !== "object") {
       this.emit("awaitDeleteOne-error", {
+        error: "input query must be an object",
+      });
+      this.emit("deleteOne-error", {
         error: "input query must be an object",
       });
       return { error: "input query must be an object" };
@@ -511,9 +560,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.deleteOne(query);
 
       this.emit("awaitDeleteOne", response);
+      this.emit("deleteOne", response);
       return response;
     } catch (error) {
       this.emit("awaitDeleteOne-error", error);
+      this.emit("deleteOne-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -539,10 +590,13 @@ class AsyncAwait extends require("./base") {
     query = {},
     dbName = this.db,
     collectionName = this.collection,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (query && typeof query !== "object") {
       this.emit("awaitDeleteMany-error", {
+        error: "input query must be an object",
+      });
+      this.emit("deleteMany-error", {
         error: "input query must be an object",
       });
       return { error: "input query must be an object" };
@@ -554,9 +608,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.deleteMany(query);
 
       this.emit("awaitDeleteMany", response);
+      this.emit("deleteMany", response);
       return response;
     } catch (error) {
       this.emit("awaitDeleteMany-error", error);
+      this.emit("deleteMany-error", error);
       return response;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -580,10 +636,13 @@ class AsyncAwait extends require("./base") {
   async awaitDropCollection(
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (collectionName && typeof collectionName !== "string") {
       this.emit("waitDropCollection-error", {
+        error: "collection name must a string",
+      });
+      this.emit("dropCollection-error", {
         error: "collection name must a string",
       });
       return { error: "collection name must a string" };
@@ -600,13 +659,19 @@ class AsyncAwait extends require("./base") {
           "awaitDropCollection",
           `collection ${collectionName} dropped from ${dbName}!`
         );
+        this.emit(
+          "dropCollection",
+          `collection ${collectionName} dropped from ${dbName}!`
+        );
         return `collection ${collectionName} dropped from ${dbName}!`;
       } else {
         this.emit("awaitDropCollection-error", { error: "Nothing happened" });
+        this.emit("dropCollection-error", { error: "Nothing happened" });
         return { error: "Nothing happened" };
       }
     } catch (error) {
       this.emit("awaitDropCollection-error", error);
+      this.emit("dropCollection-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -631,10 +696,13 @@ class AsyncAwait extends require("./base") {
   async awaitCollectionDrop(
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (collectionName && typeof collectionName !== "string") {
       this.emit("awaitCollectionDrop-error", {
+        error: "collection name must a string",
+      });
+      this.emit("collectionDrop-error", {
         error: "collection name must a string",
       });
       return { error: "collection name must a string" };
@@ -649,13 +717,19 @@ class AsyncAwait extends require("./base") {
           "awaitCollectionDrop",
           `collection ${collectionName} dropped from ${dbName}!`
         );
+        this.emit(
+          "collectionDrop",
+          `collection ${collectionName} dropped from ${dbName}!`
+        );
         return `collection ${collectionName} dropped from ${dbName}!`;
       } else {
         this.emit("awaitCollectionDrop-error", { error: "Nothing happened" });
+        this.emit("collectionDrop-error", { error: "Nothing happened" });
         return { error: "Nothing happened" };
       }
     } catch (error) {
       this.emit("awaitCollectionDrop-error", error);
+      this.emit("collectionDrop-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -679,10 +753,13 @@ class AsyncAwait extends require("./base") {
   async awaitCreateCollection(
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (collectionName && typeof collectionName !== "string") {
       this.emit("awaitCreateCollection-error", {
+        error: "collection name must a string",
+      });
+      this.emit("createCollection-error", {
         error: "collection name must a string",
       });
       return { error: "collection name must a string" };
@@ -698,13 +775,19 @@ class AsyncAwait extends require("./base") {
           "awaitCreateCollection",
           `collection ${collectionName} created for ${dbName}!`
         );
+        this.emit(
+          "createCollection",
+          `collection ${collectionName} created for ${dbName}!`
+        );
         return `collection ${collectionName} created for ${dbName}!`;
       } else {
         this.emit("awaitCreateCollection-error", "Nothing happened.");
+        this.emit("createCollection-error", "Nothing happened.");
         return "Nothing happened.";
       }
     } catch (error) {
       this.emit("awaitCreateCollection-error", error);
+      this.emit("createCollection-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -732,16 +815,22 @@ class AsyncAwait extends require("./base") {
     data = {},
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (query && typeof query !== "object") {
       this.emit("awaitUpdateOne-error", {
+        error: "input query must be an object",
+      });
+      this.emit("updateOne-error", {
         error: "input query must be an object",
       });
       return { error: "input query must be an object" };
     }
     if (data && typeof data !== "object") {
       this.emit("awaitUpdateOne-error", {
+        error: "input data must be an object",
+      });
+      this.emit("updateOne-error", {
         error: "input data must be an object",
       });
       return { error: "input data must be an object" };
@@ -753,9 +842,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.updateOne(query, { $set: data });
 
       this.emit("awaitUpdateOne", response);
+      this.emit("updateOne", response);
       return response;
     } catch (error) {
       this.emit("awaitUpdateOne-error", error);
+      this.emit("updateOne-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -785,16 +876,20 @@ class AsyncAwait extends require("./base") {
     data = {},
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (query && typeof query !== "object") {
       this.emit("awaitUpdate-error", {
+        error: "input query must be an object",
+      });
+      this.emit("update-error", {
         error: "input query must be an object",
       });
       return { error: "input query must be an object" };
     }
     if (data && typeof data !== "object") {
       this.emit("awaitUpdate-error", { error: "input data must be an object" });
+      this.emit("update-error", { error: "input data must be an object" });
       return { error: "input data must be an object" };
     }
     try {
@@ -804,9 +899,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.updateOne(query, { $set: data });
 
       this.emit("awaitUpdate", response);
+      this.emit("update", response);
       return response;
     } catch (error) {
       this.emit("awaitUpdate-error", error);
+      this.emit("update-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -834,17 +931,23 @@ class AsyncAwait extends require("./base") {
     data = {},
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (query && typeof query !== "object") {
-      this.emit("awaitUpdate-error", {
+      this.emit("awaitUpdateMany-error", {
+        error: "input query must be an object",
+      });
+      this.emit("updateMany-error", {
         error: "input query must be an object",
       });
       return { error: "input query must be an object" };
     }
 
     if (data && !Array.isArray(data) && typeof data !== "object") {
-      this.emit("awaitUpdate-error", {
+      this.emit("awaitUpdateMany-error", {
+        error: "input data must be an array or an object",
+      });
+      this.emit("updateMany-error", {
         error: "input data must be an array or an object",
       });
       return { error: "input data must be an array or an object" };
@@ -852,7 +955,10 @@ class AsyncAwait extends require("./base") {
     if (data && Array.isArray(data)) {
       for (let datum of data) {
         if (typeof datum !== "object") {
-          this.emit("awaitUpdate-error", {
+          this.emit("awaitUpdateMany-error", {
+            error: "each element of input data must be an object",
+          });
+          this.emit("updateMany-error", {
             error: "each element of input data must be an object",
           });
           return { error: "each element of input data must be an object" };
@@ -866,9 +972,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.updateMany(query, { $set: data });
 
       this.emit("awaitUpdateMany", response);
+      this.emit("updateMany", response);
       return response;
     } catch (error) {
       this.emit("awaitUpdateMany-error", error);
+      this.emit("updateMany-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -899,20 +1007,27 @@ class AsyncAwait extends require("./base") {
     projection = {},
     dbName = this.db,
     collectionName = this.collection,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (query && typeof query !== "object") {
       this.emit("awaitLimit-error", { error: "input query must be an object" });
+      this.emit("limit-error", { error: "input query must be an object" });
       return { error: "input query must be an object" };
     }
     if (limit && !Number.isInteger(limit)) {
       this.emit("awaitLimit-error", {
         error: "limit input must be an integer",
       });
+      this.emit("limit-error", {
+        error: "limit input must be an integer",
+      });
       return { error: "limit input must be an integer" };
     }
     if (projection && typeof projection !== "object") {
       this.emit("awaitLimit-error", {
+        error: "projection query must be an object",
+      });
+      this.emit("limit-error", {
         error: "projection query must be an object",
       });
       return { error: "projection query must be an object" };
@@ -927,9 +1042,11 @@ class AsyncAwait extends require("./base") {
         .toArray();
 
       this.emit("awaitLimit", response);
+      this.emit("limit", response);
       return response;
     } catch (error) {
       this.emit("awaitLimit-error", error);
+      this.emit("limit-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -956,10 +1073,13 @@ class AsyncAwait extends require("./base") {
     id,
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (id && typeof id !== "string" && !Number.isInteger(id)) {
       this.emit("awaitFirstById-error", {
+        error: "input id must be a string or a number",
+      });
+      this.emit("firstById-error", {
         error: "input id must be a string or a number",
       });
       return { error: "input id must be a string or a number" };
@@ -972,9 +1092,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.findOne({ _id: ObjectId(id) });
 
       this.emit("awaitFirstById", response);
+      this.emit("firstById", response);
       return response;
     } catch (error) {
       this.emit("awaitFirstById-error", error);
+      this.emit("firstById-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -1000,10 +1122,13 @@ class AsyncAwait extends require("./base") {
     email,
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (email && typeof email !== "string") {
       this.emit("awaitFirstByEmail-error", {
+        error: "input email must be a string",
+      });
+      this.emit("firstByEmail-error", {
         error: "input email must be a string",
       });
       return { error: "input email must be a string" };
@@ -1015,9 +1140,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.findOne({ email });
 
       this.emit("awaitFirstByEmail", response);
+      this.emit("firstByEmail", response);
       return response;
     } catch (error) {
       this.emit("awaitFirstByEmail-error", error);
+      this.emit("firstByEmail-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -1043,10 +1170,13 @@ class AsyncAwait extends require("./base") {
     email,
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (email && typeof email !== "string") {
       this.emit("awaitFindByEmail-error", {
+        error: "input email must be a string",
+      });
+      this.emit("findByEmail-error", {
         error: "input email must be a string",
       });
       return { error: "input email must be a string" };
@@ -1058,9 +1188,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.findOne({ email });
 
       this.emit("awaitFindByEmail", response);
+      this.emit("findByEmail", response);
       return response;
     } catch (error) {
       this.emit("awaitFindByEmail-error", error);
+      this.emit("findByEmail-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -1087,10 +1219,13 @@ class AsyncAwait extends require("./base") {
     username,
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (username && typeof username !== "string") {
       this.emit("awaitFirstByUsername-error", {
+        error: "input username must be a string",
+      });
+      this.emit("firstByUsername-error", {
         error: "input username must be a string",
       });
       return { error: "input username must be a string" };
@@ -1102,9 +1237,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.findOne({ username });
 
       this.emit("awaitFirstByUsername", response);
+      this.emit("firstByUsername", response);
       return response;
     } catch (error) {
       this.emit("awaitFirstByUsername-error", error);
+      this.emit("firstByUsername-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -1131,10 +1268,13 @@ class AsyncAwait extends require("./base") {
     firstname,
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (firstname && typeof firstname !== "string") {
       this.emit("awaitFirstByFirstName-error", {
+        error: "input first name must be a string",
+      });
+      this.emit("firstByFirstName-error", {
         error: "input first name must be a string",
       });
       return { error: "input first name must be a string" };
@@ -1146,9 +1286,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.findOne({ firstname });
 
       this.emit("awaitFirstByFirstName", response);
+      this.emit("firstByFirstName", response);
       return response;
     } catch (error) {
       this.emit("awaitFirstByFirstName-error", error);
+      this.emit("firstByFirstName-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -1175,10 +1317,13 @@ class AsyncAwait extends require("./base") {
     lastname,
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (lastname && typeof lastname !== "string") {
       this.emit("awaitFirstByLastName-error", {
+        error: "input last name must be a string",
+      });
+      this.emit("firstByLastName-error", {
         error: "input last name must be a string",
       });
       return { error: "input last name must be a string" };
@@ -1190,9 +1335,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.findOne({ lastname });
 
       this.emit("awaitFirstByLastName", response);
+      this.emit("firstByLastName", response);
       return response;
     } catch (error) {
       this.emit("awaitFirstByLastName-error", error);
+      this.emit("firstByLastName-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -1219,10 +1366,13 @@ class AsyncAwait extends require("./base") {
     phone,
     collectionName = this.collection,
     dbName = this.db,
-    client = new MongoClient(this.url, { useUnifiedTopology: true })
+    client = new MongoClient(this.uri, { useUnifiedTopology: true })
   ) {
     if (phone && typeof phone !== "string") {
       this.emit("awaitFirstByLastName-error", {
+        error: "input phone must be a string",
+      });
+      this.emit("firstByLastName-error", {
         error: "input phone must be a string",
       });
       return { error: "input phone must be a string" };
@@ -1234,9 +1384,11 @@ class AsyncAwait extends require("./base") {
       const response = await model.findOne({ phone });
 
       this.emit("awaitFirstByLastName", response);
+      this.emit("firstByLastName", response);
       return response;
     } catch (error) {
       this.emit("awaitFirstByLastName-error", error);
+      this.emit("firstByLastName-error", error);
       return error;
     } finally {
       // Ensures that the client will close when you finish/error
@@ -1281,4 +1433,6 @@ class AsyncAwait extends require("./base") {
 }
 
 module.exports = AsyncAwait;
+
+
 
