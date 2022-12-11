@@ -1,22 +1,22 @@
-# db-callback
+# db-promise
 
-db-callback is very simple yet very powerful tool for interacting with
-mongodb database and making internal or external API calls. Under the hood db-callback is a wrapper for the 
+db-promise is very simple yet very powerful tool for interacting with
+mongodb database and making internal or external API calls. Under the hood db-promise is a wrapper for the 
 nodejs mongodb driver. It also extracts away the complexities commonly encountered in NodeJs Mongodb
 driver or Mongoose.js. It is also a duplex stream, specifically a Transform stream. It uses
-full power of the Nodejs mongodb driver and of the NodeJs Transform Stream API. In other words, everything you can do with mongodb NodeJs driver, Mongoose.js and NodeJs Transform API you can do with db-callback! db-callback is centrally very highly event driven. Its common use is by extension or by using object destruction to get the instance methods needed or by simply using class instantiation.
+full power of the Nodejs mongodb driver and of the NodeJs Transform Stream API. In other words, everything you can do with mongodb NodeJs driver, Mongoose.js and NodeJs Transform API you can do with db-promise! db-promise is centrally very highly event driven. Its common use is by extension or by using object destruction to get the instance methods needed or by simply using class instantiation.
 
 ## Note 
-The db-callback object is an ES6 Class with an unlimited constructor parameters. All of the constructor parameters are optional! However, the most important constructor parameter is the first parameter, because it an object that defines your database connection parameters.
+The db-promise object is an ES6 Class with an unlimited constructor parameters. All of the constructor parameters are optional! However, the most important constructor parameter is the first parameter, because it an object that defines your database connection parameters.
 
 ## How it works 
-Simple and easy! On average you need no more than 3 lines of code for each of your queries or CRUD operations, even with the most complex ones. For event base queries, db-callback emits two events: a ***success*** event and an ***error*** event.
+Simple and easy! On average you need no more than 3 lines of code for each of your queries or CRUD operations, even with the most complex ones. For event base queries, db-promise emits two events: a ***success*** event and an ***error*** event.
 
 ***Success event***:
- The success event name is the name of db-callback method executed in the query.
+ The success event name is the name of db-promise method executed in the query.
 
 ***Error event***:
- The error event name is the name of db-callback method executed in the query plus the string "-error".
+ The error event name is the name of db-promise method executed in the query plus the string "-error".
 
 **Explanation** :
  If you use the ***create*** method in your query, model will emit ***success event create*** with the created object or ***error event create-error*** with the error object.
@@ -24,14 +24,14 @@ Simple and easy! On average you need no more than 3 lines of code for each of yo
 ### Installation
 
 ```bash
-$ yarn add @mongodb-model/db-callback
+$ yarn add @mongodb-model/db-promise
 
 ```
  or 
 
 ```bash
 
-$ npm i @mongodb-model/db-callback
+$ npm i @mongodb-model/db-promise
 
 ```
 
@@ -41,7 +41,7 @@ $ npm i @mongodb-model/db-callback
 
 #### constructor parameters: first parameter object 
 ```javascript
-const Model = require('@mongodb-model/db-callback');
+const Model = require('@mongodb-model/db-promise');
                 
 // Usage 
 const YourCustomModel = new Model({db: 'your_database_name', collection: 'your_collection_name', url: 'your_database_url'})
@@ -64,19 +64,31 @@ const ArticleUser = new Model({db: 'article', collection: 'users'});
 const ForumUser = new Model({db: 'forum', collection: 'users'})
 
 
-// query (create query using ForumUser)
+// awaitCreate (create query using ForumUser)
 const userData = {firstname: 'John', lastname: 'Doe', email: 'john.doe@mail.com'};
-ForumUser.create(userData);
 
-ForumUser.on('create', user => console.log('new user created', user));
-ForumUser.on('create-error', error => console.log('new user creation error', error));
+const action = ForumUser.awaitCreate(userData);
+
+ // option 1:
+    action.awaitCreate(userData)
+        .then(response => console.log(response))
+        .catch(error => console.error(error))
+
+// option 2
+ ForumUser.on('create', user => console.log('user created user', user))
+ ForumUser.on('create-error', error => console.log('user creation error', error))
+
+// option 3
+ ForumUser.on('awaitCreate', user => console.log('user created user', user))
+ ForumUser.on('awaitCreate-error', error => console.log('user creation error', error))
+
 ```
 
 
 
 #### constructor parameters: all other parameter objects 
 ```javascript
-const Model = require('@mongodb-model/db-callback');
+const Model = require('@mongodb-model/db-promise');
   
 const User = new Model({},{title: 'Cool Users', age: 25, fullName: () => 'User Full Name', Post: class Post {}});
 
@@ -94,7 +106,7 @@ const {title, age, fullName, Post} = User
 ```
 #### Making api request (http request)
 ```javascript
-const DbCallback = require('@mongodb-model/db-callback');
+const DbCallback = require('@mongodb-model/db-promise');
 const db = new DbCallback();
 db.apiGet(); //base.apiGet(your api endpoint)
 db.on('apiGet', data => console.log(data));
@@ -104,7 +116,7 @@ db.on('apiGet-error', error => console.error(error));
 #### By extension
 
 ```javascript
-class MyWonderfulClass extends require('@mongodb-model/db-callback') {
+class MyWonderfulClass extends require('@mongodb-model/db-promise') {
 
     constructor(...arrayOfObjects) {
 
@@ -127,69 +139,70 @@ class MyWonderfulClass extends require('@mongodb-model/db-callback') {
 #### common usage example
 ```javascript
 
-const DB = require('@mongodb-model/db-callback');
+const DB = require('@mongodb-model/db-promise');
 const db = new DB();
 
-// db-callback emits its method names as success events and its method names plus the string "-error" as error events
+// db-promise emits its method names as success events and its method names plus the string "-error" as error events
 
 
 // create collection 
-db.createCollection('apps')
-db.on('createCollection', console.log)
-db.on('createCollection-error', console.error)
+// awaitCreate (create query using ForumUser)
+const userData = {firstname: 'John', lastname: 'Doe', email: 'john.doe@mail.com'};
 
-// create 
-const userData = {firstname: 'John', lastname: 'Doe',email: 'john.doe@gmail.com', phone: '123-456-4343'}
-db.create(userData)
-db.on('create', console.log)
-db.on('create-error', console.log)
+const action = db.awaitCreate(userData);
 
-// findByEmail 
-db.findByEmail('Rey.Padberg@karina.biz')
-db.on('findByEmail', console.log)
-db.on('findByEmail-error', console.log)
+ // option 1:
+    action.awaitCreate(userData)
+        .then(response => console.log(response))
+        .catch(error => console.error(error))
+
+// option 2
+ db.on('create', user => console.log('user created user', user))
+ db.on('create-error', error => console.log('user creation error', error))
+
+// option 3
+ db.on('awaitCreate', user => console.log('user created user', user))
+ db.on('awaitCreate-error', error => console.log('user creation error', error))
 ```
-
-
 
 #### Available instance methods 
 ```javascript
 
-const DB = require('@mongodb-model/db-callback');
+const DB = require('@mongodb-model/db-promise');
 const db = new DB();
 
 // The following functions are available on db, the DB instance, as methods.
 
-createCollection(collectionName = 'users');
-dropCollection(collectionName = 'users');
-insertOne(data = {}, collectionName = 'users');
-create(data = {}, collectionName = 'users');
-insertMany(data = [], collectionName = 'users');
-createMany(data = [], collectionName = 'users');
-findOne(query = {}, collectionName = 'users');
-first(query = {}, collectionName = 'users');
-find(query = {}, projection = {}, collectionName = 'users');
-all(query = {}, projection = {}, collectionName = 'users');
-sort(query = {},sort = {},projection = {},collectionName = 'users');
-deleteOne(query = {}, collectionName = 'users');
-deleteMany(query = {}, collectionName = 'users');
-dropCollection(collectionName = 'collectionName', dbName = 'dbName');
-collectionDrop(dbName = 'dbName', collectionName = 'collectionName');
-updateOne(query = {}, data = {}, collectionName = 'users');
-update(query = {}, data = {}, collectionName = 'users');
-updateMany(query = {}, data = {}, collectionName = 'users');
-limit(query = {},limit = 1,projection = {},collectionName = 'users');
-letfJoin(collectionOne = "users", collectionTwo = "contacts", localField = "_id", foreignField = "user_id", as = "usersContacts");
-findById(id, collectionName = 'users');
-findByEmail(email, collectionName = 'users');
-firstByEmail(email, collectionName = 'users'); 
-firstByUsername(username, collectionName = 'users');
-firstByPhone(phone, collectionName = 'users');
-firstByFirstName(firstname, collectionName = 'users');
-firstByLastName(lastname, collectionName = 'users');
-findByQuery(query = {}, projection = {}, collectionName = 'users');
-firstByQuery(query = {}, collectionName = 'users');
-firstByToken(token, collectionName = 'users')
+awaitCeateCollection(collectionName = 'users');
+awaitDropCollection(collectionName = 'users');
+awaitInsertOne(data = {}, collectionName = 'users');
+awaitCreate(data = {}, collectionName = 'users');
+awaitInsertMany(data = [], collectionName = 'users');
+awaitCreateMany(data = [], collectionName = 'users');
+awaitFindOne(query = {}, collectionName = 'users');
+awaitFirst(query = {}, collectionName = 'users');
+awaitFind(query = {}, projection = {}, collectionName = 'users');
+awaitAll(query = {}, projection = {}, collectionName = 'users');
+awaitSort(query = {},sort = {},projection = {},collectionName = 'users');
+awaitDeleteOne(query = {}, collectionName = 'users');
+awaitDeleteMany(query = {}, collectionName = 'users');
+awaitDropCollection(collectionName = 'collectionName', dbName = 'dbName');
+awaitCollectionDrop(dbName = 'dbName', collectionName = 'collectionName');
+awaitUpdateOne(query = {}, data = {}, collectionName = 'users');
+awaitUpdate(query = {}, data = {}, collectionName = 'users');
+awaitUpdateMany(query = {}, data = {}, collectionName = 'users');
+awaitLimit(query = {},limit = 1,projection = {},collectionName = 'users');
+awaitLetfJoin(collectionOne = "users", collectionTwo = "contacts", localField = "_id", foreignField = "user_id", as = "usersContacts");
+awaitFindById(id, collectionName = 'users');
+awaitFindByEmail(email, collectionName = 'users');
+awaitFirstByEmail(email, collectionName = 'users'); 
+awaitFirstByUsername(username, collectionName = 'users');
+awaitFirstByPhone(phone, collectionName = 'users');
+awaitFirstByFirstName(firstname, collectionName = 'users');
+awaitFirstByLastName(lastname, collectionName = 'users');
+awaitFindByQuery(query = {}, projection = {}, collectionName = 'users');
+awaitFirstByQuery(query = {}, collectionName = 'users');
+awaitFirstByToken(token, collectionName = 'users')
 ```
 
 #### Author's Info

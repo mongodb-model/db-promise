@@ -1435,4 +1435,15 @@ class AsyncAwait extends require("./base") {
 module.exports = AsyncAwait;
 
 
+const User = new AsyncAwait
+
+const action = User.awaitAll();
+
+// action.then(console.log).catch(console.error)
+
+User.on('all', console.log)
+User.on('all-error', console.log);
+
+
+
 
