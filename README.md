@@ -4,7 +4,7 @@ db-promise is very simple yet very powerful tool for interacting with
 mongodb database and making internal or external API calls. Under the hood db-promise is a wrapper for the 
 nodejs mongodb driver. It also extracts away the complexities commonly encountered in NodeJs Mongodb
 driver or Mongoose.js. It is also a duplex stream, specifically a Transform stream. It uses
-full power of the Nodejs mongodb driver and of the NodeJs Transform Stream API. In other words, everything you can do with mongodb NodeJs driver, Mongoose.js and NodeJs Transform API you can do with db-promise! db-promise is centrally very highly event driven. Its common use is by extension or by using object destruction to get the instance methods needed or by simply using class instantiation.
+full power of the Nodejs mongodb driver and of the NodeJs Transform Stream API. In other words, everything you can do with mongodb NodeJs driver and NodeJs Native Transform API you can do with db-promise! db-promise is centrally very highly event driven. Its common use is by extension or by using object destruction to get the instance methods needed or by simply using class instantiation.
 
 ## Note 
 The db-promise object is an ES6 Class with an unlimited constructor parameters. All of the constructor parameters are optional! However, the most important constructor parameter is the first parameter, because it an object that defines your database connection parameters.
