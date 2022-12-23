@@ -1,6 +1,6 @@
 {
   "name": "@mongodb-model/db-promise",
-  "version": "0.0.1000010",
+  "version": "0.0.0",
   "description": "db-promise",
   "main": "index.js",
   "bin": {
